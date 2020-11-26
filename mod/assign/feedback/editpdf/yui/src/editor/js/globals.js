@@ -49,6 +49,8 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         USERINFOREGION: '[data-region="user-info"]',
         ROTATELEFTBUTTON: '.rotateleftbutton',
         ROTATERIGHTBUTTON: '.rotaterightbutton',
+        ZOOMINBUTTON: '.zoominbutton',
+        ZOOMOUTBUTTON: '.zoomoutbutton',
         DIALOGUE: '.' + CSS.DIALOGUE
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
@@ -82,4 +84,4 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         'drag': '.dragbutton',
         'highlight': '.highlightbutton'
     },
-    STROKEWEIGHT = 4;
+    STROKEWEIGHT = 2;

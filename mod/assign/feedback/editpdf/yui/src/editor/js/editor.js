@@ -232,6 +232,15 @@ EDITOR.prototype = {
     collapsecomments: true,
 
     /**
+     * The current zoom scale
+     *
+     * @property zoomscale
+     * @type float
+     * @public
+     */
+    zoomscale: 1.0,
+
+    /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
@@ -341,7 +350,7 @@ EDITOR.prototype = {
      */
     get_canvas_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
-            newpoint = new M.assignfeedback_editpdf.point(point.x - bounds.x, point.y - bounds.y);
+            newpoint = new M.assignfeedback_editpdf.point((point.x - bounds.x)/this.zoomscale, (point.y - bounds.y)/this.zoomscale);
 
         bounds.x = bounds.y = 0;
 
@@ -356,7 +365,7 @@ EDITOR.prototype = {
      */
     get_window_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
-            newpoint = new M.assignfeedback_editpdf.point(point.x + bounds.x, point.y + bounds.y);
+            newpoint = new M.assignfeedback_editpdf.point(point.x*this.zoomscale + bounds.x, point.y*this.zoomscale + bounds.y);
 
         return newpoint;
     },
@@ -797,6 +806,8 @@ EDITOR.prototype = {
             expcolcommentsbutton,
             rotateleftbutton,
             rotaterightbutton,
+            zoominbutton,
+            zoomoutbutton,
             currentstampbutton,
             stampfiles,
             picker,
@@ -823,6 +834,16 @@ EDITOR.prototype = {
         rotaterightbutton = this.get_dialogue_element(SELECTOR.ROTATERIGHTBUTTON);
         rotaterightbutton.on('click', this.rotatePDF, this, false);
         rotaterightbutton.on('key', this.rotatePDF, 'down:13', this, false);
+
+        // Zoom in
+        zoominbutton = this.get_dialogue_element(SELECTOR.ZOOMINBUTTON);
+        zoominbutton.on('click', this.set_zoom, this, true);
+        zoominbutton.on('key', this.set_zoom, 'down:13', this, true);
+
+        // Zoom out
+        zoomoutbutton = this.get_dialogue_element(SELECTOR.ZOOMOUTBUTTON);
+        zoomoutbutton.on('click', this.set_zoom, this, false);
+        zoomoutbutton.on('key', this.set_zoom, 'down:13', this, false);
 
         this.disable_touch_scroll();
 
@@ -1007,12 +1028,12 @@ EDITOR.prototype = {
      */
     edit_start: function(e) {
         var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
-            offset = canvas.getXY(),
             scrolltop = canvas.get('docScrollY'),
             scrollleft = canvas.get('docScrollX'),
-            point = {x: e.clientX - offset[0] + scrollleft,
-                     y: e.clientY - offset[1] + scrolltop},
-            selected = false;
+            clientpoint = {x: e.clientX + scrollleft,
+                           y: e.clientY + scrolltop},
+            selected = false,
+            point = this.get_canvas_coordinates(clientpoint);
 
         // Ignore right mouse click.
         if (e.button === 3) {
@@ -1483,6 +1504,33 @@ EDITOR.prototype = {
         for (i = 0; i < this.drawables.length; i++) {
             this.drawables[i].scroll_update(x, y);
         }
+    },
+
+    /**
+     * Zoom editingcanvas
+     * @protected
+     * @param {Object} e javascript event
+     * @param {boolean} zoomin  true if zooming in, false if zooming out
+     * @method set_zoom
+     */
+    set_zoom: function(e, zoomin) {
+        e.preventDefault();
+
+        if (this.get('destroyed')) {
+            return;
+        }
+
+        if (zoomin) {
+            this.zoomscale *= 1.4142136;
+        }
+        else {
+            this.zoomscale *= 1.0/1.4142136;
+        }
+
+        // Set scale in the div
+        var drawingcanvas;
+        drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+        drawingcanvas.setStyle('transform', 'scale(' + this.zoomscale + ')');
     },
 
     /**

@@ -43,7 +43,9 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         $shortcuts = array('navigate-previous-button' => 'j',
             'rotateleft' => 'q',
-            'rotateright' => 'w',
+	    'rotateright' => 'w',
+	    'zoomin' => '+',
+	    'zoomout' => '-',
             'navigate-page-select' => 'k',
             'navigate-next-button' => 'l',
             'searchcomments' => 'h',
@@ -51,7 +53,9 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'comment' => 'z',
             'commentcolour' => 'x',
             'select' => 'c',
-            'drag' => 'd',
+	    'drag' => 'd',
+	    'thin' => 't',
+	    'thick' => 'T',
             'pen' => 'y',
             'line' => 'u',
             'rectangle' => 'i',
@@ -167,7 +171,9 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         if (!$widget->readonly) {
             $rotationtools .= $this->render_toolbar_button('rotate_left', 'rotateleft', $this->get_shortcut('rotateleft'));
             $rotationtools .= $this->render_toolbar_button('rotate_right', 'rotateright', $this->get_shortcut('rotateright'));
-            $rotationtools = html_writer::div($rotationtools, 'toolbar', array('role' => 'toolbar'));
+            $rotationtools .= $this->render_toolbar_button('zoomin', 'zoomin', $this->get_shortcut('zoomin'));
+            $rotationtools .= $this->render_toolbar_button('zoomout', 'zoomout', $this->get_shortcut('zoomout'));
+	    $rotationtools = html_writer::div($rotationtools, 'toolbar', array('role' => 'toolbar'));
         }
 
         $toolbargroup = '';
@@ -183,10 +189,16 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar2 = '';
             $toolbar2 .= $this->render_toolbar_button('drag', 'drag', $this->get_shortcut('drag'));
             $toolbar2 .= $this->render_toolbar_button('select', 'select', $this->get_shortcut('select'));
-            $toolbar2 = html_writer::div($toolbar2, 'toolbar', array('role' => 'toolbar'));
+	    $toolbar2 = html_writer::div($toolbar2, 'toolbar', array('role' => 'toolbar'));
+
+	    // Stroketools
+	    $toolbar2a = '';
+	    # $toolbar2a .= $this->render_toolbar_button('thin', 'thin', $this->get_shortcut('thin'));
+	    # $toolbar2a .= $this->render_toolbar_button('thick', 'thick', $this->get_shortcut('thick'));
+	    # $toolbar2a = html_writer::div($toolbar2a, 'toolbar', array('role' => 'toolbar'));
 
             // Other Tools.
-            $toolbar3 = '';
+	    $toolbar3 = '';
             $toolbar3 .= $this->render_toolbar_button('pen', 'pen', $this->get_shortcut('pen'));
             $toolbar3 .= $this->render_toolbar_button('line', 'line', $this->get_shortcut('line'));
             $toolbar3 .= $this->render_toolbar_button('rectangle', 'rectangle', $this->get_shortcut('rectangle'));
@@ -202,7 +214,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar4 = html_writer::div($toolbar4, 'toolbar', array('role'=>'toolbar'));
 
             // Add toolbars to toolbar_group in order of display, and float the toolbar_group right.
-            $toolbars = $rotationtools . $toolbar1 . $toolbar2 . $toolbar3 . $toolbar4;
+            $toolbars = $rotationtools . $toolbar1 . $toolbar2 . $toolbar2a . $toolbar3 . $toolbar4;
             $toolbargroup = html_writer::div($toolbars, 'toolbar_group', array('role' => 'toolbar_group'));
         }
 

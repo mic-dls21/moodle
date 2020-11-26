@@ -51,6 +51,8 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         USERINFOREGION: '[data-region="user-info"]',
         ROTATELEFTBUTTON: '.rotateleftbutton',
         ROTATERIGHTBUTTON: '.rotaterightbutton',
+        ZOOMINBUTTON: '.zoominbutton',
+        ZOOMOUTBUTTON: '.zoomoutbutton',
         DIALOGUE: '.' + CSS.DIALOGUE
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
@@ -84,7 +86,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         'drag': '.dragbutton',
         'highlight': '.highlightbutton'
     },
-    STROKEWEIGHT = 4;
+    STROKEWEIGHT = 2;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -734,8 +736,8 @@ Y.extend(ANNOTATION, Y.Base, {
             deletelink.on('click', this.remove, this);
             deletelink.on('key', this.remove, 'space,enter', this);
 
-            deletelink.setX(offsetcanvas[0] + bounds.x + bounds.width - 18);
-            deletelink.setY(offsetcanvas[1] + bounds.y + 6);
+            deletelink.setX(offsetcanvas[0] + (bounds.x + bounds.width)*this.editor.zoomscale - 18);
+            deletelink.setY(offsetcanvas[1] + bounds.y*this.editor.zoomscale + 6);
             this.drawable.nodes.push(deletelink);
         }
         return this.drawable;
@@ -1562,10 +1564,8 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
     draw: function() {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             drawingcanvas = this.editor.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
-            node,
-            position;
+            node;
 
-        position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node = Y.Node.create('<div/>');
         node.addClass('annotation');
         node.addClass('stamp');
@@ -1579,9 +1579,11 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         });
 
         drawingcanvas.append(node);
-        node.setX(position.x);
-        node.setY(position.y);
-        drawable.store_position(node, position.x, position.y);
+        node.setStyles({
+            'left': this.x + 'px',
+            'top': this.y + 'px'
+        });
+        drawable.store_position(node, this.x, this.y);
 
         // Bind events only when editing.
         if (!this.editor.get('readonly')) {
@@ -2539,7 +2541,6 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             label,
             marker,
             menu,
-            position,
             scrollheight;
 
         // Lets add a contenteditable div.
@@ -2570,7 +2571,6 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             this.width = 100;
         }
 
-        position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node.setStyles({
             width: this.width + 'px',
             backgroundColor: COMMENTCOLOUR[this.colour],
@@ -2579,9 +2579,9 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
 
         drawingcanvas.append(container);
         container.setStyle('position', 'absolute');
-        container.setX(position.x);
-        container.setY(position.y);
-        drawable.store_position(container, position.x, position.y);
+        container.setStyle('left', this.x + 'px');
+        container.setStyle('top', this.y + 'px');
+        drawable.store_position(container, this.x, this.y);
         drawable.nodes.push(container);
         node.set('value', this.rawtext);
         scrollheight = node.get('scrollHeight');
@@ -3518,6 +3518,15 @@ EDITOR.prototype = {
     collapsecomments: true,
 
     /**
+     * The current zoom scale
+     *
+     * @property zoomscale
+     * @type float
+     * @public
+     */
+    zoomscale: 1.0,
+
+    /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
@@ -3627,7 +3636,7 @@ EDITOR.prototype = {
      */
     get_canvas_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
-            newpoint = new M.assignfeedback_editpdf.point(point.x - bounds.x, point.y - bounds.y);
+            newpoint = new M.assignfeedback_editpdf.point((point.x - bounds.x)/this.zoomscale, (point.y - bounds.y)/this.zoomscale);
 
         bounds.x = bounds.y = 0;
 
@@ -3642,7 +3651,7 @@ EDITOR.prototype = {
      */
     get_window_coordinates: function(point) {
         var bounds = this.get_canvas_bounds(),
-            newpoint = new M.assignfeedback_editpdf.point(point.x + bounds.x, point.y + bounds.y);
+            newpoint = new M.assignfeedback_editpdf.point(point.x*this.zoomscale + bounds.x, point.y*this.zoomscale + bounds.y);
 
         return newpoint;
     },
@@ -4083,6 +4092,8 @@ EDITOR.prototype = {
             expcolcommentsbutton,
             rotateleftbutton,
             rotaterightbutton,
+            zoominbutton,
+            zoomoutbutton,
             currentstampbutton,
             stampfiles,
             picker,
@@ -4109,6 +4120,16 @@ EDITOR.prototype = {
         rotaterightbutton = this.get_dialogue_element(SELECTOR.ROTATERIGHTBUTTON);
         rotaterightbutton.on('click', this.rotatePDF, this, false);
         rotaterightbutton.on('key', this.rotatePDF, 'down:13', this, false);
+
+        // Zoom in
+        zoominbutton = this.get_dialogue_element(SELECTOR.ZOOMINBUTTON);
+        zoominbutton.on('click', this.set_zoom, this, true);
+        zoominbutton.on('key', this.set_zoom, 'down:13', this, true);
+
+        // Zoom out
+        zoomoutbutton = this.get_dialogue_element(SELECTOR.ZOOMOUTBUTTON);
+        zoomoutbutton.on('click', this.set_zoom, this, false);
+        zoomoutbutton.on('key', this.set_zoom, 'down:13', this, false);
 
         this.disable_touch_scroll();
 
@@ -4293,12 +4314,12 @@ EDITOR.prototype = {
      */
     edit_start: function(e) {
         var canvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
-            offset = canvas.getXY(),
             scrolltop = canvas.get('docScrollY'),
             scrollleft = canvas.get('docScrollX'),
-            point = {x: e.clientX - offset[0] + scrollleft,
-                     y: e.clientY - offset[1] + scrolltop},
-            selected = false;
+            clientpoint = {x: e.clientX + scrollleft,
+                           y: e.clientY + scrolltop},
+            selected = false,
+            point = this.get_canvas_coordinates(clientpoint);
 
         // Ignore right mouse click.
         if (e.button === 3) {
@@ -4769,6 +4790,33 @@ EDITOR.prototype = {
         for (i = 0; i < this.drawables.length; i++) {
             this.drawables[i].scroll_update(x, y);
         }
+    },
+
+    /**
+     * Zoom editingcanvas
+     * @protected
+     * @param {Object} e javascript event
+     * @param {boolean} zoomin  true if zooming in, false if zooming out
+     * @method set_zoom
+     */
+    set_zoom: function(e, zoomin) {
+        e.preventDefault();
+
+        if (this.get('destroyed')) {
+            return;
+        }
+
+        if (zoomin) {
+            this.zoomscale *= 1.4142136;
+        }
+        else {
+            this.zoomscale *= 1.0/1.4142136;
+        }
+
+        // Set scale in the div
+        var drawingcanvas;
+        drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
+        drawingcanvas.setStyle('transform', 'scale(' + this.zoomscale + ')');
     },
 
     /**

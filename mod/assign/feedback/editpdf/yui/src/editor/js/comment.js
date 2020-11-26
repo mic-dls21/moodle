@@ -164,7 +164,6 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             label,
             marker,
             menu,
-            position,
             scrollheight;
 
         // Lets add a contenteditable div.
@@ -195,7 +194,6 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             this.width = 100;
         }
 
-        position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node.setStyles({
             width: this.width + 'px',
             backgroundColor: COMMENTCOLOUR[this.colour],
@@ -204,9 +202,9 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
 
         drawingcanvas.append(container);
         container.setStyle('position', 'absolute');
-        container.setX(position.x);
-        container.setY(position.y);
-        drawable.store_position(container, position.x, position.y);
+        container.setStyle('left', this.x + 'px');
+        container.setStyle('top', this.y + 'px');
+        drawable.store_position(container, this.x, this.y);
         drawable.nodes.push(container);
         node.set('value', this.rawtext);
         scrollheight = node.get('scrollHeight');

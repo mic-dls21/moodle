@@ -43,10 +43,8 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
     draw: function() {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             drawingcanvas = this.editor.get_dialogue_element(SELECTOR.DRAWINGCANVAS),
-            node,
-            position;
+            node;
 
-        position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node = Y.Node.create('<div/>');
         node.addClass('annotation');
         node.addClass('stamp');
@@ -60,9 +58,11 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         });
 
         drawingcanvas.append(node);
-        node.setX(position.x);
-        node.setY(position.y);
-        drawable.store_position(node, position.x, position.y);
+        node.setStyles({
+            'left': this.x + 'px',
+            'top': this.y + 'px'
+        });
+        drawable.store_position(node, this.x, this.y);
 
         // Bind events only when editing.
         if (!this.editor.get('readonly')) {

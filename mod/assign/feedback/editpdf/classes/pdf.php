@@ -50,6 +50,8 @@ class pdf extends TcpdfFpdi {
     protected $imagefolder = null;
     /** @var string the path to the PDF currently being processed */
     protected $filename = null;
+    /** @var float the current display resolution **/
+    protected $imageres = 200;
 
     /** No errors */
     const GSPATH_OK = 'ok';
@@ -104,7 +106,7 @@ class pdf extends TcpdfFpdi {
         $this->setPageUnit('pt');
         $this->setPrintHeader(false);
         $this->setPrintFooter(false);
-        $this->scale = 72.0 / 100.0;
+        $this->scale = 72.0 / $this->imageres;
         // Use font supporting the widest range of characters.
         $this->SetFont($this->get_export_font_name(), '', 16.0 * $this->scale, '', true);
         $this->SetTextColor(0, 0, 0);
@@ -152,7 +154,7 @@ class pdf extends TcpdfFpdi {
         $olddebug = error_reporting(0);
 
         $this->setPageUnit('pt');
-        $this->scale = 72.0 / 100.0;
+        $this->scale = 72.0 / $this->imageres;
         $this->SetFont($this->get_export_font_name(), '', 16.0 * $this->scale, '', true);
         $this->SetFillColor(255, 255, 176);
         $this->SetDrawColor(0, 0, 0);
@@ -562,7 +564,7 @@ class pdf extends TcpdfFpdi {
         if ($generate) {
             // Use ghostscript to generate an image of the specified page.
             $gsexec = \escapeshellarg($CFG->pathtogs);
-            $imageres = \escapeshellarg(100);
+            $imageres = \escapeshellarg($this->imageres);
             $imagefilearg = \escapeshellarg($imagefile);
             $filename = \escapeshellarg($this->filename);
             $pagenoinc = \escapeshellarg($pageno + 1);
@@ -802,7 +804,7 @@ class pdf extends TcpdfFpdi {
 
         $this->AddPage($orientation, $size);
         $this->SetAutoPageBreak(false, 0);
-        $this->Image('@' . $imagecontent, 0, 0, $size['w'], $size['h'],
+        $this->Image('@' . $imagecontent, 0, 0, $size['width'], $size['height'],
             '', '', '', false, null, '', false, false, 0);
     }
 }
