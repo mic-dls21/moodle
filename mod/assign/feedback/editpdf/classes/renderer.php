@@ -236,7 +236,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'progressbarlabel');
         $loading = html_writer::div($progressbar . $progressbarlabel, 'loading');
 
-        $canvas = html_writer::div($loading, 'drawingcanvas');
+        $canvas = html_writer::div($loading, 'drawingcanvas scalecanvas');
         $canvas = html_writer::div($canvas, 'drawingregion');
         // Place for messages, but no warnings displayed yet.
         $changesmessage = html_writer::div('', 'warningmessages');

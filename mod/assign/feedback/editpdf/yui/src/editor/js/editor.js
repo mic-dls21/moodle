@@ -1527,10 +1527,14 @@ EDITOR.prototype = {
             this.zoomscale *= 1.0/1.4142136;
         }
 
-        // Set scale in the div
-        var drawingcanvas;
-        drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
-        drawingcanvas.setStyle('transform', 'scale(' + this.zoomscale + ')');
+        // Adapt style
+        var zoom_stylesheet = Y.StyleSheet('assignfeedback_editpdf_zoom');
+        zoom_stylesheet.set('.assignfeedback_editpdf_widget .scalecanvas', {
+            transformOrigin: 'top left',
+            transform: 'scale(' + this.zoomscale + ')'});
+        zoom_stylesheet.set('.assignfeedback_editpdf_widget .undoscale', {
+            transformOrigin: 'top left',
+            transform: 'scale(' + 1.0 / this.zoomscale + ')'});
     },
 
     /**

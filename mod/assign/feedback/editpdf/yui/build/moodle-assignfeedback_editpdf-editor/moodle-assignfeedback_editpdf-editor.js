@@ -2545,7 +2545,7 @@ var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
 
         // Lets add a contenteditable div.
         node = Y.Node.create('<textarea/>');
-        container = Y.Node.create('<div class="commentdrawable"/>');
+        container = Y.Node.create('<div class="commentdrawable undoscale"/>');
         label = Y.Node.create('<label/>');
         marker = Y.Node.create('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 13 13" ' +
                 'preserveAspectRatio="xMinYMin meet">' +
@@ -4813,10 +4813,14 @@ EDITOR.prototype = {
             this.zoomscale *= 1.0/1.4142136;
         }
 
-        // Set scale in the div
-        var drawingcanvas;
-        drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
-        drawingcanvas.setStyle('transform', 'scale(' + this.zoomscale + ')');
+        // Adapt style
+        var zoom_stylesheet = Y.StyleSheet('assignfeedback_editpdf_zoom');
+        zoom_stylesheet.set('.assignfeedback_editpdf_widget .scalecanvas', {
+            transformOrigin: 'top left',
+            transform: 'scale(' + this.zoomscale + ')'});
+        zoom_stylesheet.set('.assignfeedback_editpdf_widget .undoscale', {
+            transformOrigin: 'top left',
+            transform: 'scale(' + 1.0 / this.zoomscale + ')'});
     },
 
     /**
