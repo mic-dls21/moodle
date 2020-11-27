@@ -4814,15 +4814,16 @@ EDITOR.prototype = {
         }
 
         // Adapt style
-        var zoom_stylesheet = Y.StyleSheet('assignfeedback_editpdf_zoom');
-        zoom_stylesheet.set('.assignfeedback_editpdf_widget .scalecanvas', {
-            transformOrigin : 'top left',
-            transform       : 'scale(' + this.zoomscale + ')'
-        });
-        zoom_stylesheet.set('.assignfeedback_editpdf_widget .undoscale', {
-            transformOrigin : 'top left',
-            transform       : 'scale(' + 1.0 / this.zoomscale + ')'
-        });
+        var zoom_stylesheet = document.getElementByID('assignfeedback_editpdf_scalestyle');
+        zoom_stylesheet.innerHTML =
+'.assignfeedback_editpdf_widget .scalecanvas {\n' +
+'    transform-origin : top left;\n' +
+'    transform        : scale(' + this.zoomscale + ');\n' +
+'}\n' +
+'.assignfeedback_editpdf_widget .undoscale {\n' +
+'    transform-origin : top left;\n' +
+'    transform        : scale(' + 1.0 / this.zoomscale + ');\n' +
+'}';
     },
 
     /**

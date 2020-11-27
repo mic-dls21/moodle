@@ -15,17 +15,6 @@
     margin-left: auto;
     margin-right: auto;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 20px rgba(0, 0, 0, .2);
-    transform-origin: top left;
-}
-
-.assignfeedback_editpdf_widget .scalecanvas {
-    transform-origin: left top;
-    transform: scale(1);
-}
-
-.assignfeedback_editpdf_widget .undoscale {
-    transform-origin: left top;
-    transform: scale(1);
 }
 
 .assignfeedback_editpdf_widget .moodle-dialogue-bd .drawingregion {

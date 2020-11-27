@@ -130,6 +130,21 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         $html .= html_writer::div($links, 'visibleifjs');
         $header = get_string('pluginname', 'assignfeedback_editpdf');
+
+        // add a style to be changed dynamically
+        $html .= '
+<style id="assignfeedback_editpdf_scalestyle">
+.assignfeedback_editpdf_widget .scalecanvas {
+    transform-origin: left top;
+    transform: scale(1);
+}
+
+.assignfeedback_editpdf_widget .undoscale {
+    transform-origin: left top;
+    transform: scale(1);
+}
+</style>';
+
         $body = '';
         // Create the page navigation.
         $navigation1 = '';
