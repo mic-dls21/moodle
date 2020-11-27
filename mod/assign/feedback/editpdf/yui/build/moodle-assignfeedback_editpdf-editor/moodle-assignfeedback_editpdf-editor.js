@@ -4816,11 +4816,13 @@ EDITOR.prototype = {
         // Adapt style
         var zoom_stylesheet = Y.StyleSheet('assignfeedback_editpdf_zoom');
         zoom_stylesheet.set('.assignfeedback_editpdf_widget .scalecanvas', {
-            transformOrigin: 'top left',
-            transform: 'scale(' + this.zoomscale + ')'});
+            transformOrigin : 'top left',
+            transform       : 'scale(' + this.zoomscale + ')'
+        });
         zoom_stylesheet.set('.assignfeedback_editpdf_widget .undoscale', {
-            transformOrigin: 'top left',
-            transform: 'scale(' + 1.0 / this.zoomscale + ')'});
+            transformOrigin : 'top left',
+            transform       : 'scale(' + 1.0 / this.zoomscale + ')'
+        });
     },
 
     /**

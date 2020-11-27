@@ -18,6 +18,16 @@
     transform-origin: top left;
 }
 
+.assignfeedback_editpdf_widget .scalecanvas {
+    transform-origin: left top;
+    transform: scale(1);
+}
+
+.assignfeedback_editpdf_widget .undoscale {
+    transform-origin: left top;
+    transform: scale(1);
+}
+
 .assignfeedback_editpdf_widget .moodle-dialogue-bd .drawingregion {
     position: inherit;
 }
