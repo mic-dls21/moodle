@@ -1528,7 +1528,7 @@ EDITOR.prototype = {
         }
 
         // Adapt style
-        var zoom_stylesheet = document.getElementByID('assignfeedback_editpdf_scalestyle');
+        var zoom_stylesheet = document.getElementById('assignfeedback_editpdf_scalestyle');
         zoom_stylesheet.innerHTML =
 '.assignfeedback_editpdf_widget .scalecanvas {\n' +
 '    transform-origin : top left;\n' +
