@@ -821,6 +821,16 @@ EDITOR.prototype = {
         expcolcommentsbutton.on('click', this.expandCollapseComments, this);
         expcolcommentsbutton.on('key', this.expandCollapseComments, 'down:13', this);
 
+        // Zoom in
+        zoominbutton = this.get_dialogue_element(SELECTOR.ZOOMINBUTTON);
+        zoominbutton.on('click', this.set_zoom, this, true);
+        zoominbutton.on('key', this.set_zoom, 'down:13', this, true);
+
+        // Zoom out
+        zoomoutbutton = this.get_dialogue_element(SELECTOR.ZOOMOUTBUTTON);
+        zoomoutbutton.on('click', this.set_zoom, this, false);
+        zoomoutbutton.on('key', this.set_zoom, 'down:13', this, false);
+
         if (this.get('readonly')) {
             return;
         }
@@ -834,16 +844,6 @@ EDITOR.prototype = {
         rotaterightbutton = this.get_dialogue_element(SELECTOR.ROTATERIGHTBUTTON);
         rotaterightbutton.on('click', this.rotatePDF, this, false);
         rotaterightbutton.on('key', this.rotatePDF, 'down:13', this, false);
-
-        // Zoom in
-        zoominbutton = this.get_dialogue_element(SELECTOR.ZOOMINBUTTON);
-        zoominbutton.on('click', this.set_zoom, this, true);
-        zoominbutton.on('key', this.set_zoom, 'down:13', this, true);
-
-        // Zoom out
-        zoomoutbutton = this.get_dialogue_element(SELECTOR.ZOOMOUTBUTTON);
-        zoomoutbutton.on('click', this.set_zoom, this, false);
-        zoomoutbutton.on('key', this.set_zoom, 'down:13', this, false);
 
         this.disable_touch_scroll();
 

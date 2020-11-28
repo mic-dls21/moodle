@@ -186,10 +186,10 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         if (!$widget->readonly) {
             $rotationtools .= $this->render_toolbar_button('rotate_left', 'rotateleft', $this->get_shortcut('rotateleft'));
             $rotationtools .= $this->render_toolbar_button('rotate_right', 'rotateright', $this->get_shortcut('rotateright'));
-            $rotationtools .= $this->render_toolbar_button('zoomin', 'zoomin', $this->get_shortcut('zoomin'));
-            $rotationtools .= $this->render_toolbar_button('zoomout', 'zoomout', $this->get_shortcut('zoomout'));
-	    $rotationtools = html_writer::div($rotationtools, 'toolbar', array('role' => 'toolbar'));
         }
+        $rotationtools .= $this->render_toolbar_button('zoomin', 'zoomin', $this->get_shortcut('zoomin'));
+        $rotationtools .= $this->render_toolbar_button('zoomout', 'zoomout', $this->get_shortcut('zoomout'));
+	    $rotationtools = html_writer::div($rotationtools, 'toolbar', array('role' => 'toolbar'));
 
         $toolbargroup = '';
         $clearfix = html_writer::div('', 'clearfix');
